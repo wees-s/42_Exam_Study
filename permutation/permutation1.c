@@ -1,0 +1,94 @@
+// Assignment name  : permutations
+// Expected files   : *.c *.h
+// Allowed functions: puts, malloc, calloc, realloc, free, write
+// ---------------------------------------------------------------
+
+// Write a program that will print all the permutations of a string given as argument.
+
+// The solutions must be given in alphabetical order.
+
+// We will not try your program with strings containing duplicates (eg: 'abccd').
+
+// For example this should work:
+
+// $> ./permutations a | cat -e
+// a$
+
+// $> ./permutations ab | cat -e
+// ab$
+// ba$
+
+//$> ./permutations abc | cat -e
+//abc$
+//acb$
+//bac$
+//bca$
+//cab$
+//cba$
+
+#include <stdio.h>
+#include <unistd.h>
+#include <string.h>
+
+void order(char *str, int index);
+void permutation(char *str);
+
+void permutation(char *str)
+{
+    puts(str);
+    int pivo;
+    int sucessor;
+    char temp;
+    pivo = strlen(str) - 2;
+    sucessor = strlen(str) - 1;
+    while (pivo >= 0)
+    {
+        if (str[pivo] <= str[pivo + 1])
+        {
+            sucessor = strlen(str) - 1;
+            while (str[sucessor] <= str[pivo])
+                sucessor--;
+            temp = str[pivo];
+            str[pivo] = str[sucessor];
+            str[sucessor] = temp;
+            order(str, pivo + 1);
+            puts(str);
+            pivo = strlen(str) - 2;
+        }
+        else
+            pivo--;
+    }
+}
+
+void order(char *str, int index)
+{
+    int j;
+    char temp;
+
+    while (str[index])
+    {
+        j = index + 1;
+        while (str[j])
+        {
+            if (str[index] > str[j])
+            {
+                temp = str[index];
+                str[index] = str[j];
+                str[j] = temp;
+            }
+            j++;
+        }
+        index++;
+    }
+}
+
+int main(int argc, char **argv)
+{
+    if (argc != 2)
+        return (1);
+    if (!argv[1][0])
+        return (1);
+    order(argv[1], 0);
+    permutation(argv[1]);
+    return (0);
+}
