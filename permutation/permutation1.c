@@ -35,60 +35,59 @@ void permutation(char *str);
 
 void permutation(char *str)
 {
-    puts(str);
-    int pivo;
-    int sucessor;
-    char temp;
-    pivo = strlen(str) - 2;
-    sucessor = strlen(str) - 1;
-    while (pivo >= 0)
-    {
-        if (str[pivo] <= str[pivo + 1])
-        {
-            sucessor = strlen(str) - 1;
-            while (str[sucessor] <= str[pivo])
-                sucessor--;
-            temp = str[pivo];
-            str[pivo] = str[sucessor];
-            str[sucessor] = temp;
-            order(str, pivo + 1);
-            puts(str);
-            pivo = strlen(str) - 2;
-        }
-        else
-            pivo--;
-    }
+	puts(str);
+	int pivo;
+	int sucessor;
+	char temp;
+	pivo = strlen(str) - 2;
+	while (pivo >= 0)
+	{
+		if (str[pivo] <= str[pivo + 1])
+		{
+			sucessor = strlen(str) - 1;
+			while (str[sucessor] <= str[pivo])
+				sucessor--;
+			temp = str[pivo];
+			str[pivo] = str[sucessor];
+			str[sucessor] = temp;
+			order(str, pivo + 1);
+			puts(str);
+			pivo = strlen(str) - 2;
+		}
+		else
+			pivo--;
+	}
 }
 
 void order(char *str, int index)
 {
-    int j;
-    char temp;
+	int j;
+	char temp;
 
-    while (str[index])
-    {
-        j = index + 1;
-        while (str[j])
-        {
-            if (str[index] > str[j])
-            {
-                temp = str[index];
-                str[index] = str[j];
-                str[j] = temp;
-            }
-            j++;
-        }
-        index++;
-    }
+	while (str[index])
+	{
+		j = index + 1;
+		while (str[j])
+		{
+			if (str[index] > str[j])
+			{
+				temp = str[index];
+				str[index] = str[j];
+				str[j] = temp;
+			}
+			j++;
+		}
+		index++;
+	}
 }
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
-        return (1);
-    if (!argv[1][0])
-        return (1);
-    order(argv[1], 0);
-    permutation(argv[1]);
-    return (0);
+	if (argc != 2)
+		return (1);
+	if (!argv[1][0])
+		return (1);
+	order(argv[1], 0);
+	permutation(argv[1]);
+	return (0);
 }
