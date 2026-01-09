@@ -37,45 +37,38 @@
 //   more than one argument, it must return 1.
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 7
+#define BUFFER_SIZE 3
 #endif
 #define _GNU_SOURCE
 #include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 
-char *ft_join(char *str1, char *str2);
 char *ft_strdup(char *str);
+char *ft_join(char *str1, char *str2);
 void filter(char *big, char *needle);
-
-void filter(char *big, char *needle)
-{
-    char *start;
-    ssize_t b_l;
-    ssize_t n_l;
-    b_l = strlen(big);
-    n_l = strlen(needle);
-    while((start = memmem(big, b_l, needle, n_l)))
-        memset(start, '*', n_l);
-    printf("%s", big);
-}
 
 char *ft_join(char *str1, char *str2)
 {
-    if (str1 && !str2)
-        return (ft_strdup(str1));
-    if (!str1 && str2)
-        return(ft_strdup(str2));
     char *result;
-
-    result = malloc(sizeof(char) * (strlen(str1) + strlen(str2)) + 1);
     int i;
     int j;
     i = 0;
     j = 0;
+    if (str1 && !str2)
+    {
+        result = ft_strdup(str1);
+        return (result);
+    }
+    if (!str1 && str2)
+    {
+        result = ft_strdup(str2);
+        return (result);
+    }
+    result = malloc(sizeof(char) * (strlen(str1) + strlen(str2)) + 1);
     while (str1[i])
     {
         result[i] = str1[i];
@@ -91,18 +84,30 @@ char *ft_join(char *str1, char *str2)
     return (result);
 }
 
+void filter(char *big, char *needle)
+{
+    char *start;
+    ssize_t b_len;
+    ssize_t n_len;
+    b_len = strlen(big);
+    n_len = strlen(needle);
+    while((start = memmem(big, b_len, needle, n_len)))
+        memset(start, '*', n_len);
+    printf("%s", big);
+}
+
 char *ft_strdup(char *str)
 {
     char *result;
-    if (!str[0])
+    if(!str[0])
     {
         result = malloc(sizeof(char) * 1);
         result[0] = '\0';
         return (result);
     }
-    result = malloc(sizeof(char) * strlen(str) + 1);
     int i;
     i = 0;
+    result = malloc(sizeof(char) * strlen(str) + 1);
     while (str[i])
     {
         result[i] = str[i];
@@ -121,18 +126,30 @@ int main(int argc, char **argv)
     char *buffer;
     char *temp;
     char *stash;
-    ssize_t rd;
-
+    int rd;
     buffer = malloc(sizeof(char) * BUFFER_SIZE + 1);
+    if (!buffer)
+    {
+        perror("ERROR:");
+        return (1);
+    }
     temp = NULL;
     stash = NULL;
     while ((rd = read(0, buffer, BUFFER_SIZE)) > 0)
     {
         buffer[rd] = '\0';
         stash = ft_join(temp, buffer);
-        temp = stash;
+        if (temp != NULL)
+        {
+            free(temp);
+            temp = NULL;
+        }
+        temp = ft_strdup(stash);
+        // temp = stash;
+        free(stash);
+        stash = NULL;
     }
-    filter(stash, argv[1]);
+    filter(temp, argv[1]);
     free(buffer);
     free(temp);
     return (0);
