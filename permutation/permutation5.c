@@ -1,37 +1,7 @@
-// Assignment name  : permutations
-// Expected files   : *.c *.h
-// Allowed functions: puts, malloc, calloc, realloc, free, write
-// ---------------------------------------------------------------
-
-// Write a program that will print all the permutations of a string given as argument.
-
-// The solutions must be given in alphabetical order.
-
-// We will not try your program with strings containing duplicates (eg: 'abccd').
-
-// For example this should work:
-
-// $> ./permutations a | cat -e
-// a$
-
-// $> ./permutations ab | cat -e
-// ab$
-// ba$
-
-//$> ./permutations abc | cat -e
-//abc$
-//acb$
-//bac$
-//bca$
-//cab$
-//cba$
-
 #include <stdio.h>
 #include <string.h>
-
 void order(char *str, int i);
-
-void permutation(char *str)
+void solve(char *str)
 {
     puts(str);
     int pivo;
@@ -50,7 +20,6 @@ void permutation(char *str)
             str[sucessor] = temp;
             order(str, pivo + 1);
             puts(str);
-            puts("teste");
             pivo = strlen(str) - 2;
         }
         else
@@ -60,14 +29,12 @@ void permutation(char *str)
 
 void order(char *str, int i)
 {
-    int j;
     char temp;
-
-    j = i + 1;
+    int j;
     while (str[i])
     {
         j = i + 1;
-        while(str[j])
+        while (str[j])
         {
             if (str[i] > str[j])
             {
@@ -81,13 +48,9 @@ void order(char *str, int i)
     }
 }
 
-int main(int argc, char **argv)
+int main (int argc, char **argv)
 {
-    if (argc != 2)
-        return (1);
-    if (!argv[1][0])
-        return (1);
     order(argv[1], 0);
-    permutation(argv[1]);
+    solve(argv[1]);
     return (0);
 }

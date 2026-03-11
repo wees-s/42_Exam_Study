@@ -29,52 +29,56 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
-int seguro(int linha, int coluna, int *pos)
+int is_safe(int *pos, int col, int line)
 {
     int i;
 
     i = 0;
-    while (i < linha)
+    while (i < line)//enquanto i for MENOR do que a LINHA
     {
-        if (pos[i] == coluna)
+        if (pos[i] == col) //verificando se a posição do index atual é igual a COLUNA
             return (0);
-        if (abs(pos[i] - coluna) == abs(i - linha))
+        int check1 = pos[i] - col;
+        if (check1 < 0)
+            check1 = check1 * -1;
+        int check2 = line - i; //verificação de LINHA - I
+        if (check2 < 0)
+            check2 = check2 * -1;
+        if (check1 == check2) //se forem iguais, está errada.
             return (0);
         i++;
     }
     return (1);
 }
 
-void backtrack(int linha, int *pos, int n)
+void backtrack(int queens, int *pos, int line)
 {
     int i;
-    int j;
-    int coluna;
+    int col;
+
+    col = 0;
     i = 0;
-    j = 0;
-    coluna = 0;
-    if (linha == n)//se a linha chegar ate o valor de N (valor enviado pelo usuario)
+    if (line == queens)
     {
-        i = 0;
-        while(i < n)
+        while (i < queens)
         {
-            printf("%d", pos[i]);
-            if (i + 1 < n)
-                printf(" ");
+            fprintf(stdout, "%d", pos[i]);
+            if (i + 1 != queens)
+                fprintf(stdout, " ");
             i++;
         }
-        printf ("\n");
+        fprintf(stdout, "\n");
+        return ;
     }
-    while(coluna < n)
+    while (col < queens)
     {
-        if (seguro(linha, coluna, pos))
+        if (is_safe(pos, col, line))
         {
-            pos[linha] = coluna;
-            backtrack(linha + 1, pos, n);
+            pos[line] = col; //pos[line] = coluna.
+            backtrack(queens, pos, line + 1);
         }
-        coluna++;
+        col++;
     }
 }
 
@@ -84,13 +88,10 @@ int main(int argc, char **argv)
         return (1);
     if (!argv[1][0])
         return (1);
-    int n;
+    int queens;
     int *pos;
-    n = atoi(argv[1]);
-    pos = malloc(sizeof(int) * n);
-    if (!pos)
-        return (1);
-    backtrack(0, pos, n);
-    free(pos);
+    queens = atoi(argv[1]);
+    pos = malloc(sizeof(int) * queens);
+    backtrack(queens, pos, 0);
     return (0);
 }

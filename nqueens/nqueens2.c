@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+=======
+// Assignement name : n_queens
+
+// Expected files : *.c *.h
+
+// Allowed functions : atoi, fprintf, write, calloc, malloc, free, realloc, stdout, stderr
+
+// -------------------------------------------------------------------------
+
+>>>>>>> 6e3f22816845ee6dea65300685546e2e9249c0ea
 // Write a program that will print all the solutions to the n queens problem
 // for a n given as argument.
 // We will not test with negative values.
@@ -21,21 +32,40 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <math.h>
 
 void backtrack(int queens, int *pos, int line);
 int seguro(int linha, int coluna, int *pos);
 
 int seguro(int linha, int coluna, int *pos)
+=======
+
+int valid_pos(int line, int *pos, int col)
+>>>>>>> 6e3f22816845ee6dea65300685546e2e9249c0ea
 {
     int i;
 
     i = 0;
+<<<<<<< HEAD
     while (i < linha)
     {
         if (pos[i] == coluna)
             return (0);
         if (abs(pos[i] - coluna) == abs(i - linha))
+=======
+    while (i < line)
+    {
+        if (pos[i] == col)
+            return (0);
+        int check = pos[i] - col;
+        if (check < 0)
+            check = check * -1;
+        int check2 = i - line;
+        if (check2 < 0)
+            check2 = check2 * -1;
+        if (check == check2)
+>>>>>>> 6e3f22816845ee6dea65300685546e2e9249c0ea
             return (0);
         i++;
     }
@@ -44,6 +74,7 @@ int seguro(int linha, int coluna, int *pos)
 
 void backtrack(int queens, int *pos, int line)
 {
+<<<<<<< HEAD
     int col;
     int i;
 
@@ -52,15 +83,33 @@ void backtrack(int queens, int *pos, int line)
     if (line == queens)
     {
         while (i < queens)
+=======
+    int i;
+    int col;
+
+    col = 0;
+    i = 0;
+    if (line == queens)
+    {
+        while(i < queens)
+>>>>>>> 6e3f22816845ee6dea65300685546e2e9249c0ea
         {
             printf("%d ", pos[i]);
             i++;
         }
         printf("\n");
+<<<<<<< HEAD
     }
     while(col < queens)
     {
         if (seguro(line, col, pos))
+=======
+        return ;
+    }
+    while (col < queens)
+    {
+        if (valid_pos(line, pos, col))
+>>>>>>> 6e3f22816845ee6dea65300685546e2e9249c0ea
         {
             pos[line] = col;
             backtrack(queens, pos, line + 1);
@@ -77,6 +126,7 @@ int main(int argc, char **argv)
         return (1);
     int queens;
     int *pos;
+<<<<<<< HEAD
     int line = 0;
 
     queens = atoi(argv[1]);
@@ -84,5 +134,10 @@ int main(int argc, char **argv)
         return (0);
     pos = (int *)malloc(sizeof(int) * queens);
     backtrack(queens, pos, line);
+=======
+    queens = atoi(argv[1]);
+    pos = (int *)malloc(sizeof(int) * queens);
+    backtrack(queens, pos, 0);
+>>>>>>> 6e3f22816845ee6dea65300685546e2e9249c0ea
     return (0);
 }
