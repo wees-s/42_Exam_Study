@@ -1,0 +1,41 @@
+Aqui está o Roteiro Infalível (O Checklist Mental) que você pode decorar:
+
+1. Preparação (O Cenário)
+Variáveis: Você sempre precisará de um fd[2], um prev_fd = -1 (o passado) e um pid.
+
+Loop: Varre a matriz de comandos até o fim.
+
+2. O Ritual dentro do Loop (O Coração)
+Siga esta ordem exata:
+
+Criar o Futuro: Se existe cmds[i+1], chama o pipe(fd).
+
+Dividir o Mundo: Chama o fork().
+
+Ação do Filho:
+
+Olha para o passado: Se prev_fd != -1, faz dup2 no 0 e fecha.
+
+Olha para o futuro: Se existe cmds[i+1], faz dup2 no 1 e fecha.
+
+Executa: execvp e exit.
+
+Ação do Pai:
+
+Limpa o passado: Se prev_fd != -1, fecha.
+
+Guarda o futuro: Se existe cmds[i+1], fecha a escrita (fd[1]) e faz prev_fd = fd[0].
+
+3. Finalização (O Encerramento)
+Limpeza Final: Fecha o último prev_fd que sobrou no bolso do pai.
+
+Sincronização: Faz o while(wait(NULL) > 0) para não deixar processos zumbis.
+
+Por que esse roteiro é seguro?
+Evita Leaks: Se você segue o ritual de "abriu/duplicou/fechou", você nunca esquece um FD aberto.
+
+Evita Deadlocks: Fechar o fd[1] no Pai logo após o fork é o passo mais importante do roteiro para o comando seguinte não ficar travado.
+
+Dica de Ouro para a Prova: Se você travar, desenhe dois círculos (processos) e um caninho entre eles. Escreva 1 na saída do primeiro e 0 na entrada do segundo. Isso vai te lembrar instantaneamente de qual índice usar no dup2.
+
+Se você escrever esse código umas 3 ou 4 vezes do zero, esse roteiro vai para a sua memória muscular. Você vai começar a digitar os close() antes mesmo de terminar os dup2().

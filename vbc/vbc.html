@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VBC (42 Escola)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4ec9b0;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+        h2 {
+            color: #569cd6;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #569cd6;
+            padding-bottom: 10px;
+        }
+        h3 {
+            color: #dcdcaa;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .section {
+            background: #252526;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        .code-block {
+            background: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 5px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        .wrong {
+            border-left: 4px solid #f44336;
+        }
+        .correct {
+            border-left: 4px solid #4caf50;
+        }
+        .code-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 3px;
+        }
+        .wrong .code-title {
+            background: #f443361a;
+            color: #f44336;
+        }
+        .correct .code-title {
+            background: #4caf501a;
+            color: #4caf50;
+        }
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .explanation {
+            background: #2d2d30;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #dcdcaa;
+            border-radius: 3px;
+        }
+        .logic-flow {
+            background: #2d2d30;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .logic-step {
+            padding: 10px;
+            margin: 10px 0;
+            background: #1e1e1e;
+            border-left: 3px solid #4ec9b0;
+            border-radius: 3px;
+        }
+        .highlight {
+            color: #ce9178;
+            font-weight: bold;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .comment {
+            color: #6a9955;
+        }
+        .final-code {
+            background: #0d1117;
+            border: 2px solid #4caf50;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+        ul, ol {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+        li {
+            margin: 8px 0;
+        }
+        .critical {
+            background: #4a2d2d;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Guia Completo: Correção do VBC</h1>
+
+        <div class="section">
+            <h2>🎯 Objetivo do Exercício</h2>
+            <p>O arquivo fornecido pela 42 (<code>given.c</code>) é um esqueleto cheio de "pegadinhas" (erros intencionais de compilação e lógica) e buracos que você deve preencher. O objetivo é construir um analisador (parser) matemático que respeita precedência de <code>*</code>, <code>+</code> e parênteses <code>()</code>.</p>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Caça aos Bugs no given.c</h2>
+
+            <h3>1️⃣ A Pegadinha do Include</h3>
+            <div class="comparison">
+                <div class="code-block wrong">
+                    <div class="code-title">❌ CÓDIGO DA PROVA</div>
+                    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;malloc.h&gt; // change this to &lt;stdlib.h&gt;
+#include &lt;ctype.h&gt;</code></pre>
+                </div>
+                <div class="code-block correct">
+                    <div class="code-title">✅ CÓDIGO CORRIGIDO</div>
+                    <pre><code>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;ctype.h&gt;</code></pre>
+                </div>
+            </div>
+            <div class="explanation">
+                <strong>❌ Problema:</strong> O próprio esqueleto avisa para mudar. Usar <code>malloc.h</code> pode causar erro na Moulinette e warnings no gcc.
+            </div>
+
+            <h3>2️⃣ A Pegadinha do Protótipo Fantasma</h3>
+            <div class="comparison">
+                <div class="code-block wrong">
+                    <div class="code-title">❌ CÓDIGO DA PROVA</div>
+                    <pre><code>    struct node *r;
+}   node;
+
+node *n(**s);
+
+node    *new_node(node n)</code></pre>
+                </div>
+                <div class="code-block correct">
+                    <div class="code-title">✅ CÓDIGO CORRIGIDO</div>
+                    <pre><code>    struct node *r;
+}   node;
+
+<span class="comment">/* Remova node *n(**s); e coloque seus protótipos reais: */</span>
+node *parse_add(char **s);
+node *parse_mult(char **s);
+node *parse_base(char **s);
+
+node    *new_node(node n)</code></pre>
+                </div>
+            </div>
+            <div class="explanation">
+                <strong>❌ Problema:</strong> O protótipo <code>node *n(**s);</code> é lixo sintático colocado de propósito para quebrar a compilação e te confundir. Apague-o e declare as funções que você vai criar, pois a recursão de cima para baixo vai precisar delas.
+            </div>
+
+            <h3>3️⃣ O Erro Fatal na Lógica de Leitura (accept)</h3>
+            <div class="comparison">
+                <div class="code-block wrong">
+                    <div class="code-title">❌ CÓDIGO DA PROVA</div>
+                    <pre><code>int accept(char **s, char c)
+{
+    if (**s)
+    {
+        (*s)++;
+        return (1);
+    }
+    return (0);
+}</code></pre>
+                </div>
+                <div class="code-block correct">
+                    <div class="code-title">✅ CÓDIGO CORRIGIDO</div>
+                    <pre><code>int accept(char **s, char c)
+{
+    if (**s == c)
+    {
+        (*s)++;
+        return (1);
+    }
+    return (0);
+}</code></pre>
+                </div>
+            </div>
+            <div class="explanation">
+                <strong>❌ Problema:</strong> O código original avança o ponteiro para QUALQUER caractere válido (<code>if (**s)</code>), engolindo a string inteira na primeira leitura. Ele não checa se o caractere é o <code>c</code> esperado.<br>
+                <strong>✅ Solução:</strong> Coloque <code>== c</code> para só consumir o caractere se ele for um '+' ou '*' real.
+            </div>
+
+            <h3>4️⃣ Variável Não Declarada (parse_expr)</h3>
+            <div class="comparison">
+                <div class="code-block wrong">
+                    <div class="code-title">❌ CÓDIGO DA PROVA</div>
+                    <pre><code>node    *parse_expr(char *s)
+{
+    //...
+
+    if (*s) 
+    {
+        destroy_tree(ret);
+        return (NULL);
+    }
+    return (ret);
+}</code></pre>
+                </div>
+                <div class="code-block correct">
+                    <div class="code-title">✅ CÓDIGO CORRIGIDO</div>
+                    <pre><code>node    *parse_expr(char *s)
+{
+    node *ret = parse_add(&s);
+    if (!ret)
+        return (NULL);
+
+    if (*s) 
+    {
+        unexpected(*s);
+        destroy_tree(ret);
+        return (NULL);
+    }
+    return (ret);
+}</code></pre>
+                </div>
+            </div>
+            <div class="explanation">
+                <strong>❌ Problema:</strong> A variável <code>ret</code> é usada para dar free (destroy_tree) e retornar, mas ela não foi declarada nem instanciada.<br>
+                <strong>✅ Solução:</strong> Declare o <code>node *ret</code> chamando a função de nível mais alto do seu parser (<code>parse_add</code>). Além disso, se o ponteiro não chegou no <code>\0</code> (if *s), chame <code>unexpected(*s)</code> antes de destruir a árvore para cumprir a regra de mensagens de erro.
+            </div>
+
+            <h3>5️⃣ Falta de Retorno (eval_tree)</h3>
+            <div class="comparison">
+                <div class="code-block wrong">
+                    <div class="code-title">❌ CÓDIGO DA PROVA</div>
+                    <pre><code>int eval_tree(node *tree)
+{
+    switch (tree->type)
+    {
+        case ADD:
+            return (eval_tree(tree->l) + eval_tree(tree->r));
+        <span class="comment">...</span>
+        case VAL:
+            return (tree->val);
+    }
+}</code></pre>
+                </div>
+                <div class="code-block correct">
+                    <div class="code-title">✅ CÓDIGO CORRIGIDO</div>
+                    <pre><code>int eval_tree(node *tree)
+{
+    switch (tree->type)
+    {
+        case ADD:
+            return (eval_tree(tree->l) + eval_tree(tree->r));
+        <span class="comment">...</span>
+        case VAL:
+            return (tree->val);
+    }
+    return (0);
+}</code></pre>
+                </div>
+            </div>
+            <div class="explanation">
+                <strong>❌ Problema:</strong> Falta um <code>return</code> fora do <code>switch</code>, o que gera o warning de compilação <em>control reaches end of non-void function</em> na flag <code>-Werror</code>.<br>
+                <strong>✅ Solução:</strong> Adicione <code>return (0);</code> no fim.
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧠 Lógica da Solução: O Código Faltante (//...)</h2>
+            <div class="logic-flow">
+                <p>Onde o esqueleto mostra <code>//...</code>, você deve criar as três funções de parser. Decore essa ordem:</p>
+                <div class="logic-step">
+                    <strong>1. BASE:</strong> Lida com <code>( )</code> e converte char para <code>int</code> subtraindo <code>'0'</code>.<br>
+                </div>
+                <div class="logic-step">
+                    <strong>2. MULTIPLICAÇÃO:</strong> Pega a BASE no lado esquerdo. Num <code>while</code> procura <code>*</code>. Se achar, pega a BASE no direito e vira o novo nó pai.<br>
+                </div>
+                <div class="logic-step">
+                    <strong>3. ADIÇÃO:</strong> Pega a MULTIPLICAÇÃO no lado esquerdo. Num <code>while</code> procura <code>+</code>. Se achar, pega a MULT no lado direito e vira o novo nó pai.<br>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>📝 O Bloco de Código que Você Deve Inserir</h2>
+
+            <div class="final-code">
+                <pre><code><span class="comment">/* ================= LOGICA DA ARVORE ================= */</span>
+node *parse_base(char **s)
+{
+    node *res;
+    node tmp;
+
+    <span class="comment">/* Caso 1: Parênteses (recomeça a hierarquia no topo) */</span>
+    if (accept(s, '('))
+    {
+        res = parse_add(s);
+        if (!res) return (NULL);
+        if (!expect(s, ')')) 
+        { 
+            destroy_tree(res); <span class="comment">/* Evita memory leak */</span>
+            return (NULL); 
+        }
+        return (res);
+    }
+    <span class="comment">/* Caso 2: Números */</span>
+    if (isdigit(**s))
+    {
+        tmp.type = VAL;
+        tmp.val = **s - '0';
+        res = new_node(tmp);
+        (*s)++;
+        return (res);
+    }
+    <span class="comment">/* Caso 3: Lixo sintático */</span>
+    unexpected(**s);
+    return (NULL);
+}
+
+node *parse_mult(char **s)
+{
+    node *left = parse_base(s);
+    node tmp;
+
+    if (!left) return (NULL);
+    while (accept(s, '*'))
+    {
+        node *right = parse_base(s);
+        if (!right) 
+        { 
+            destroy_tree(left); <span class="comment">/* Limpa memória se a direita falhar */</span>
+            return (NULL); 
+        }
+        tmp.type = MULTI;
+        tmp.l = left;
+        tmp.r = right;
+        left = new_node(tmp);
+    }
+    return (left);
+}
+
+node *parse_add(char **s)
+{
+    node *left = parse_mult(s);
+    node tmp;
+
+    if (!left) return (NULL);
+    while (accept(s, '+'))
+    {
+        node *right = parse_mult(s);
+        if (!right) 
+        { 
+            destroy_tree(left); 
+            return (NULL); 
+        }
+        tmp.type = ADD;
+        tmp.l = left;
+        tmp.r = right;
+        left = new_node(tmp);
+    }
+    return (left);
+}</code></pre>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
