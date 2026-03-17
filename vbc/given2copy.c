@@ -1,7 +1,5 @@
 #include <stdio.h>
-//#include <malloc.h> // change this to <stdlib.h>
-#include <stdlib.h>
-//troquei o malloc por stdlib
+#include <stdlib.h> // change this to <stdlib.h>
 #include <ctype.h>
 
 typedef struct node {
@@ -15,9 +13,9 @@ typedef struct node {
     struct node *r;
 }   node;
 
-node *parser_base(char **s); //troquei a prototipação errada e adicionei as que vou criar
-node *parser_mult(char **s); //troquei a prototipação errada e adicionei as que vou criar
-node *parser_add(char **s); //troquei a prototipação errada e adicionei as que vou criar
+node *parse_add(char **s);
+node *parse_mult(char **s);
+node *parse_base(char **s);
 
 node    *new_node(node n)
 {
@@ -48,10 +46,9 @@ void    unexpected(char c)
         printf("Unexpected end of input\n");
 }
 
-//accept também foi alterado
 int accept(char **s, char c)
 {
-    if (**s == c)//é necessário perguntar se **s é == c, antes estava somente **s
+    if (**s == c)
     {
         (*s)++;
         return (1);
@@ -67,16 +64,14 @@ int expect(char **s, char c)
     return (0);
 }
 
-//...ADICIONAR PARSER DEPOIS DE EXPECT
-node *parser_base(char **s)
+node *parse_base(char **s)
 {
-    node *res;//retorno res
-    node tmp;//temporária
+    node *res;
+    node tmp;
 
-    //parenteses recomeça a hierarquia no topo
     if (accept(s, '('))
     {
-        res = parser_add(s);
+        res = parse_add(s);
         if (!res)
             return (NULL);
         if (!expect(s, ')'))
@@ -98,16 +93,16 @@ node *parser_base(char **s)
     return (NULL);
 }
 
-node *parser_mult(char **s)
+node *parse_mult(char **s)
 {
-    node *left = parser_base(s);
+    node *left = parse_base(s);
     node tmp;
 
     if (!left)
         return (NULL);
-    while (accept(s, '*'))
+    while(accept(s, '*'))
     {
-        node *right = parser_base(s);
+        node *right = parse_base(s);
         if (!right)
         {
             destroy_tree(left);
@@ -121,16 +116,16 @@ node *parser_mult(char **s)
     return (left);
 }
 
-node *parser_add(char **s)
+node *parse_add(char **s)
 {
-    node *left = parser_mult(s);
+    node *left = parse_mult(s);
     node tmp;
 
     if (!left)
         return (NULL);
-    while (accept(s, '+'))
+    while(accept(s, '+'))
     {
-        node *right = parser_mult(s);
+        node *right = parse_mult(s);
         if (!right)
         {
             destroy_tree(left);
@@ -146,15 +141,11 @@ node *parser_add(char **s)
 
 node    *parse_expr(char *s)
 {
-    //...tem uma variável não declarada aqui, preciso declarar agora
-    //a variável é a ret
-    node *ret = parser_add(&s);
-    if (!ret)//precisa veriricar se ret está vazio e preenche-lo com NULL
-        return (NULL);
-
+    node *ret = parse_add(&s);
+    if (!ret)
+        return(NULL);
     if (*s) 
     {
-        //precisa adicionar a função unexpeted aqui
         unexpected(*s);
         destroy_tree(ret);
         return (NULL);
@@ -173,7 +164,7 @@ int eval_tree(node *tree)
         case VAL:
             return (tree->val);
     }
-    return (0); //faltava o retorno básico para compilar
+    return (0);
 }
 
 int main(int argc, char **argv)
