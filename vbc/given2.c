@@ -71,10 +71,10 @@ node *parse_base(char **s)
 
     if (accept(s, '('))
     {
-        res = parse_add(s);//res sempre igual a parse add
-        if (!res)//se não tiver, erro
+        res = parse_add(s);
+        if (!res)
             return (NULL);
-        if (!expect(s, ')'))//se expected for diferente, destrua a tree, retorne NULL
+        if (!expect(s, ')'))
         {
             destroy_tree(res);
             return (NULL);

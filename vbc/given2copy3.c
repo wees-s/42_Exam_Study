@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <malloc.h> // change this to <stdlib.h>
+#include <stdlib.h>
 #include <ctype.h>
 
 typedef struct node {
@@ -13,7 +13,9 @@ typedef struct node {
     struct node *r;
 }   node;
 
-node *n(**s);
+node *parse_add(char **s);
+node *parse_multi(char **s);
+node *parse_base(char **s);
 
 node    *new_node(node n)
 {
@@ -46,7 +48,7 @@ void    unexpected(char c)
 
 int accept(char **s, char c)
 {
-    if (**s)
+    if (**s == c)
     {
         (*s)++;
         return (1);
@@ -62,14 +64,82 @@ int expect(char **s, char c)
     return (0);
 }
 
-//...
+node *parse_add(char **s){
+    node *left = parse_multi(s);
+    node tmp;
+    
+    while (accept(s, '+'))
+    {
+        node *right = parse_multi(s);
+        if (!right)
+        {
+            destroy_tree(left);
+            return (NULL);
+        }
+        tmp.l = left;
+        tmp.r = right;
+        tmp.type = ADD;
+        left = new_node(tmp);
+    }
+    return (left);
+}
+
+node *parse_multi(char **s){
+    node *left = parse_base(s);
+    node tmp;
+
+    while (accept(s, '*'))
+    {
+        node *right = parse_base(s);
+        if (!right)
+        {
+            destroy_tree(left);
+            return (NULL);
+        }
+        tmp.l = left;
+        tmp.r = right;
+        tmp.type = MULTI;
+        left = new_node(tmp);
+    }
+    return (left);
+}
+
+node *parse_base(char **s){
+    node *ret;
+    node tmp;
+
+    if (accept(s, '('))
+    {
+        ret = parse_add(s);
+        if (!ret)
+            return (NULL);
+        if (!expect(s, ')'))
+        {
+            destroy_tree(ret);
+            return (NULL);
+        }
+        return (ret);
+    }
+    if (isdigit(**s))
+    {
+        tmp.type = VAL;
+        tmp.val = **s - '0';
+        ret = new_node(tmp);
+        (*s)++;//sempre passar o ponteiro em isdigit depois de new node 
+        return (ret);
+    }
+    unexpected(**s);
+    return (NULL);
+}
 
 node    *parse_expr(char *s)
 {
-    //...
-
+    node *ret = parse_add(&s);
+    if(!ret)
+        return(NULL);
     if (*s) 
     {
+        unexpected(*s);
         destroy_tree(ret);
         return (NULL);
     }
@@ -87,6 +157,7 @@ int eval_tree(node *tree)
         case VAL:
             return (tree->val);
     }
+    return (0);
 }
 
 int main(int argc, char **argv)
